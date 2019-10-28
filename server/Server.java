@@ -1,5 +1,9 @@
 import java.net.*;
 import java.io.*;
+import java.awt.*;
+import java.util.*;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
 
 public class Server{
 
@@ -41,25 +45,21 @@ public class Server{
 
     @Override
     public void run(){
-      BufferedReader in = null;
+      String pathname = "img/";
 
       try{
-        //Todo
+        InputStream is = socket.getInputStream();
+        ObjectInputStream ois = new ObjectInputStream(is);
 
-        in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+        Request request = (Request)ois.readObject();
 
+        byte[] byteArray = request.getByteArray();
+        BufferedImage image = ImageIO.read(new ByteArrayInputStream(byteArray));
 
+        ImageIO.write(image,"png", new File(pathname.concat(request.source)));
 
-      }catch(IOException ioe){
+      }catch(Exception ioe){
         ioe.printStackTrace();
-      }finally{
-        try{
-          if(in != null){
-            in.close();
-          }
-        }catch(IOException ioe){
-          ioe.printStackTrace();
-        }
       }
     }
   }

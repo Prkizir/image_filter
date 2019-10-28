@@ -19,6 +19,7 @@ public class Client{
       OutputStream os = socket.getOutputStream();
       Scanner scanner = new Scanner(System.in);
       String str = null;
+
       while(true){
 
         System.out.print("> ");
@@ -44,59 +45,33 @@ public class Client{
               filter = params[1];
               destination = params[2];
 
-              oos.writeObject(new Request(source, filter));
+              try{
+                oos.flush();
+                oos.writeObject(new Request(source, filter));
+              }catch(Exception e){
+                e.printStackTrace();
+              }
             }
 
             if(argc == 4){
-              System.out.println("There are 4 args");
               source = params[0];
               filter = params[1];
               destination = params[2];
               technology = params[3];
 
-              oos.writeObject(new Request(source, filter, technology));
+              try{
+                oos.flush();
+                oos.writeObject(new Request(source, filter, technology));
+              }catch(Exception e){
+                e.printStackTrace();
+              }
             }
           }
         }
-
-
       }
-
       scanner.close();
     }catch(IOException ioe){
-      System.out.println("Could not connect to host: " + host);
+      System.out.println("Could not process request to host: " + host);
     }
-  }
-
-  public static class Request{
-    public String source, filter, technology;
-
-    public BufferedImage bf;
-
-    public Request(String source, String filter) throws IOException{
-      this.source = source;
-      this.filter = filter;
-      this.bf = ImageIO.read(new File(source));
-    }
-
-    public Request(String source, String filter, String technology) throws IOException{
-      this.source = source;
-      this.filter = filter;
-      this.technology = technology;
-      this.bf = ImageIO.read(new File(source));
-    }
-
-    public String getFilter(){
-      return filter;
-    }
-
-    public String getTechnology(){
-      return technology;
-    }
-
-    public BufferedImage getBufferedImage(){
-      return bf;
-    }
-
   }
 }
