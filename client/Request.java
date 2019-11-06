@@ -34,6 +34,13 @@ public class Request implements Serializable{
     this.byteArray = bstream.toByteArray();
   }
 
+  public String getFileName(){
+    File f = new File(source);
+    String name =  f.getName();
+
+    return name;
+  }
+
   public String getFilter(){
     return filter;
   }
@@ -45,5 +52,4 @@ public class Request implements Serializable{
   public byte[] getByteArray(){
     return byteArray;
   }
-
 }

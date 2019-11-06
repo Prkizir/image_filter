@@ -11,27 +11,42 @@ public class Request implements Serializable{
 
   public byte[] byteArray;
 
+
+  //Constructor with 2 params
   public Request(String source, String filter) throws Exception{
     this.source = source;
     this.filter = filter;
 
+    //begin img preparation into byte array
     BufferedImage img = ImageIO.read(new File(source));
     ByteArrayOutputStream bstream = new ByteArrayOutputStream();
     ImageIO.write(img,"png",bstream);
+    //end img preparation into byte array
 
     this.byteArray = bstream.toByteArray();
   }
 
+  //Constructor with 3 params
   public Request(String source, String filter, String technology) throws Exception{
     this.source = source;
     this.filter = filter;
     this.technology = technology;
 
+    //begin img preparation into byte array
     BufferedImage img = ImageIO.read(new File(source));
     ByteArrayOutputStream bstream = new ByteArrayOutputStream();
     ImageIO.write(img,"png",bstream);
+    //end img preparation into byte array
+
 
     this.byteArray = bstream.toByteArray();
+  }
+
+  public String getFileName(){
+    File f = new File(source);
+    String name =  f.getName();
+
+    return name;
   }
 
   public String getFilter(){
@@ -45,5 +60,4 @@ public class Request implements Serializable{
   public byte[] getByteArray(){
     return byteArray;
   }
-
 }

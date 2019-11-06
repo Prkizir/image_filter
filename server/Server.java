@@ -14,6 +14,7 @@ public class Server{
     try{
       serverSocket = new ServerSocket(8991);
       serverSocket.setReuseAddress(true);
+      System.out.println("Server started...");
 
       while(true){
         Socket socket = serverSocket.accept();
@@ -46,6 +47,8 @@ public class Server{
     @Override
     public void run(){
       String pathname = "img/";
+      String cmd = null;
+      Exec exec = null;
 
       try{
         InputStream is = socket.getInputStream();
@@ -56,10 +59,29 @@ public class Server{
         byte[] byteArray = request.getByteArray();
         BufferedImage image = ImageIO.read(new ByteArrayInputStream(byteArray));
 
-        ImageIO.write(image,"png", new File(pathname.concat(request.source)));
+        ImageIO.write(image,"png", new File(pathname.concat(request.getFileName())));
 
-      }catch(Exception ioe){
-        ioe.printStackTrace();
+        String techName = request.getTechnology();
+
+        switch(techName){
+          case "cuda":
+            exec = new Exec("./exec/cu/Filter " + "img/" + request.getFileName(), "cu");
+            break;
+          case "java":
+            exec = new Exec("java exec/jv/Filter " + "img/" + request.getFileName(), "jv");
+            break;
+          case "openmp":
+            exec = new Exec("./exec/omp/Filter " + "img/" + request.getFileName(), "omp");
+            break;
+          case "tbb":
+            exec = new Exec("./exec/tbb/Filter " + "img/" + request.getFileName(), "tbb");
+            break;
+          default:
+            System.out.printf("Option: %s not available\n", techName);
+            break;
+        }
+      }catch(Exception e){
+        System.out.println("Client disconnected...");
       }
     }
   }
