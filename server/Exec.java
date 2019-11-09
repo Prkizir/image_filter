@@ -1,20 +1,25 @@
 import java.io.IOException;
 import java.util.*;
+import java.io.File;
 
 public class Exec{
   String cmd;
-  String technology;
+  String dir;
 
-  public Exec(String cmd, String technology){
+  public Exec(String cmd, String dir){
     this.cmd = cmd;
-    this.technology = technology;
+    this.dir = dir;
   }
 
   public void execute() throws IOException, InterruptedException{
-    ProcessBuilder pbuilder = new ProcessBuilder(cmd);
+    List<String> commands = new ArrayList<String>(Arrays.asList(cmd.split(" ")));
 
-    pbuilder.directory(new File("exec/" + technology));
+    ProcessBuilder pbuilder = new ProcessBuilder(commands);
 
-    
+    pbuilder.directory(new File(dir));
+
+    Process p = pbuilder.start();
+
+    //p.wait();
   }
 }

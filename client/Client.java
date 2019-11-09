@@ -30,45 +30,32 @@ public class Client{
           socket.close();
           System.out.println("Connection closed");
           break;
+        }
+
+        ObjectOutputStream oos = new ObjectOutputStream(os);
+        String[] params = str.split(" +");
+        int argc = params.length;
+
+        if(argc != 4){
+          System.out.println("usage: [image_source_path] [filter] [image_destination_path] <technology>");
         }else{
-          ObjectOutputStream oos = new ObjectOutputStream(os);
-          String[] params = str.split(" +");
-          int argc = params.length;
 
-          if(argc < 3 || argc > 4){
-            System.out.println("usage: [image_source_path] [filter] [image_destination_path] <technology>");
-          }else{
+          System.out.println("Sending request...");
 
-            System.out.println("Sending request...");
-            if(argc == 3){
-              source = params[0];
-              filter = params[1];
-              destination = params[2];
+          source = params[0];
+          filter = params[1];
+          destination = params[2];
+          technology = params[3];
 
-              try{
-                oos.flush();
-                oos.writeObject(new Request(source, filter));
-              }catch(Exception e){
-                e.printStackTrace();
-              }
-            }
-
-            if(argc == 4){
-              source = params[0];
-              filter = params[1];
-              destination = params[2];
-              technology = params[3];
-
-              try{
-                oos.flush();
-                oos.writeObject(new Request(source, filter, technology));
-              }catch(Exception e){
-                e.printStackTrace();
-              }
-            }
+          try{
+            oos.writeObject(new Request(source, filter, technology));
+            oos.flush();
+          }catch(Exception e){
+            e.printStackTrace();
           }
         }
       }
+
       scanner.close();
     }catch(IOException ioe){
       System.out.println("Could not process request to host: " + host);

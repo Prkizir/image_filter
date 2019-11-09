@@ -19,7 +19,7 @@ public class Filter extends RecursiveAction{
     this.height = height;
   }
 
-  private void blur(int row, int col){
+  public void blur(int row, int col){
     int border, i, j, cells;
     int tmp_row, tmp_col, pixel, dpixel;
 
@@ -53,8 +53,25 @@ public class Filter extends RecursiveAction{
     dest[(row * width) + col] = dpixel;
   }
 
-  public void grey(int row, int col){
+  private void gray(int row, int col){
+    int pixel, dpixel;
 
+    float r, g, b, avg;
+
+    pixel = src[(row * width) + col];
+
+    r = (float) ((pixel & 0x00ff0000) >> 16);
+    g = (float) ((pixel & 0x0000ff00) >> 8);
+    b = (float) ((pixel & 0x000000ff) >> 0);
+
+    avg = (r + g + b)/3;
+
+    dpixel = (0xff000000)
+                         | ((int) avg << 16)
+                         | ((int) avg << 8)
+                         | ((int) avg << 0);
+
+    dest[(row * width) + col] = dpixel;
   }
 
   public void hue(int row, int col){
@@ -62,7 +79,36 @@ public class Filter extends RecursiveAction{
   }
 
   public void edge(int row, int col){
+    int topPixel, lowPixel, dpixel;
+    int tmp_row;
 
+    float rH, gH, bH, avgH;
+    float rL, gL, bL, avgL;
+
+    tmp_row = Math.min( Math.max(row + 1, 0), height - 1);
+
+    topPixel = src[(row * width) + col];
+    lowPixel = src[(tmp_row * width) + col];
+
+    rH = (float) ((topPixel & 0x00ff0000) >> 16);
+    gH = (float) ((topPixel & 0x0000ff00) >> 8);
+    bH = (float) ((topPixel & 0x000000ff) >> 0);
+
+    rL = (float) ((lowPixel & 0x00ff0000) >> 16);
+    gL = (float) ((lowPixel & 0x0000ff00) >> 8);
+    bL = (float) ((lowPixel & 0x000000ff) >> 0);
+
+    avgH = (rH + gH + bH)/3;
+    avgL = (rL + gL + bL)/3;
+
+    if(0.65 >= Math.abs(avgH - avgL) &&
+       0.70 >= Math.abs(avgH - avgL)){
+      dpixel = (0xffffffff);
+    }else{
+      dpixel = (0xff000000);
+    }
+
+    dest[(row * width) + col] = dpixel;
   }
 
   protected void computeDirectly(){
@@ -72,7 +118,8 @@ public class Filter extends RecursiveAction{
     for(index = start; index < end; index++){
       row = index / width;
       col = index % width;
-      blur(row, col);
+
+      edge(row, col);
     }
   }
 
@@ -106,7 +153,7 @@ public class Filter extends RecursiveAction{
     final BufferedImage destination = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     destination.setRGB(0, 0, w, h, dest, 0, w);
 
-    File output = new File("blur.png");
+    File output = new File("output.png");
     ImageIO.write(destination, "png", output);
   }
 }

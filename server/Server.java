@@ -47,41 +47,67 @@ public class Server{
     @Override
     public void run(){
       String pathname = "img/";
+
       String cmd = null;
+      String dir = null;
       Exec exec = null;
 
-      try{
-        InputStream is = socket.getInputStream();
-        ObjectInputStream ois = new ObjectInputStream(is);
+      while(true){
+        try{
+          InputStream is = socket.getInputStream();
+          ObjectInputStream ois = new ObjectInputStream(is);
 
-        Request request = (Request)ois.readObject();
+          Request request = (Request)ois.readObject();
 
-        byte[] byteArray = request.getByteArray();
-        BufferedImage image = ImageIO.read(new ByteArrayInputStream(byteArray));
+          byte[] byteArray = request.getByteArray();
+          BufferedImage image = ImageIO.read(new ByteArrayInputStream(byteArray));
 
-        ImageIO.write(image,"png", new File(pathname.concat(request.getFileName())));
+          ImageIO.write(image,"png", new File(pathname.concat(request.getFileName())));
 
-        String techName = request.getTechnology();
+          String techName = request.getTechnology();
 
-        switch(techName){
-          case "cuda":
-            exec = new Exec("./exec/cu/Filter " + "img/" + request.getFileName(), "cu");
-            break;
-          case "java":
-            exec = new Exec("java exec/jv/Filter " + "img/" + request.getFileName(), "jv");
-            break;
-          case "openmp":
-            exec = new Exec("./exec/omp/Filter " + "img/" + request.getFileName(), "omp");
-            break;
-          case "tbb":
-            exec = new Exec("./exec/tbb/Filter " + "img/" + request.getFileName(), "tbb");
-            break;
-          default:
-            System.out.printf("Option: %s not available\n", techName);
-            break;
+          switch(techName){
+            case "cuda":
+              cmd = "./Filter ../../img/" + request.getFileName() + " " + request.getFilter();
+              dir = "exec/cu/img";
+
+              exec = new Exec(cmd, dir);
+              exec.execute();
+
+              break;
+            case "java":
+              cmd = "java Filter ../../img/" + request.getFileName() + " " + request.getFilter();
+              dir = "exec/jv/img";
+
+              exec = new Exec(cmd, dir);
+              exec.execute();
+
+              break;
+            case "openmp":
+              cmd = "./Filter ../../img/" + request.getFileName() + " " + request.getFilter();
+              dir = "exec/omp/img";
+
+              exec = new Exec(cmd, dir);
+              exec.execute();
+
+              break;
+            case "tbb":
+              cmd = "./Filter ../../img" + request.getFileName() + " " + request.getFilter();
+              dir = "exec/tbb/img";
+
+              exec = new Exec(cmd, dir);
+              exec.execute();
+
+              break;
+            default:
+              System.out.printf("Option: %s not available\n", techName);
+              break;
+          }
+
+        }catch(Exception e){
+          System.out.println("Client disconnected...");
+          break;
         }
-      }catch(Exception e){
-        System.out.println("Client disconnected...");
       }
     }
   }
