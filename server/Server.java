@@ -50,12 +50,16 @@ public class Server{
 
       String cmd = null;
       String dir = null;
+      String fn = null;
       Exec exec = null;
 
       while(true){
         try{
           InputStream is = socket.getInputStream();
+          OutputStream os = socket.getOutputStream();
+
           ObjectInputStream ois = new ObjectInputStream(is);
+          ObjectOutputStream oos = new ObjectOutputStream(os);
 
           Request request = (Request)ois.readObject();
 
@@ -68,43 +72,65 @@ public class Server{
 
           switch(techName){
             case "cuda":
-              cmd = "./Filter ../../img/" + request.getFileName() + " " + request.getFilter();
-              dir = "exec/cu/img";
+              fn = "cu_" + request.getFilter() + "_" + request.getFileName();
+              cmd = "./Filter ../../img/" + request.getFileName() + " "
+                                          + request.getFilter() + " "
+                                          + fn;
+              dir = "exec/cu";
 
               exec = new Exec(cmd, dir);
               exec.execute();
 
               break;
+
             case "java":
-              cmd = "java Filter ../../img/" + request.getFileName() + " " + request.getFilter();
-              dir = "exec/jv/img";
+              fn = "jv_" + request.getFilter() + "_" + request.getFileName();
+              cmd = "java Filter ../../img/" + request.getFileName() + " "
+                                             + request.getFilter() + " "
+                                             + fn;
+              dir = "exec/jv";
+
 
               exec = new Exec(cmd, dir);
               exec.execute();
 
               break;
+
             case "openmp":
-              cmd = "./Filter ../../img/" + request.getFileName() + " " + request.getFilter();
-              dir = "exec/omp/img";
+              fn = "omp_" + request.getFilter() + "_" + request.getFileName();
+              cmd = "./Filter ../../img/" + request.getFileName() + " "
+                                          + request.getFilter() + " "
+                                          + fn;
+              dir = "exec/omp";
 
               exec = new Exec(cmd, dir);
               exec.execute();
 
               break;
+
             case "tbb":
-              cmd = "./Filter ../../img" + request.getFileName() + " " + request.getFilter();
-              dir = "exec/tbb/img";
+              fn = "tbb_" + request.getFilter() + "_" + request.getFileName();
+              cmd = "./Filter ../../img" + request.getFileName() + " "
+                                         + request.getFilter() + " "
+                                         + fn;
+              dir = "exec/tbb";
 
               exec = new Exec(cmd, dir);
               exec.execute();
 
               break;
+
             default:
               System.out.printf("Option: %s not available\n", techName);
               break;
           }
 
+
+          oos.writeObject(new Response(dir + "/img/" + fn));
+          oos.flush();
+
         }catch(Exception e){
+          e.printStackTrace();
           System.out.println("Client disconnected...");
           break;
         }

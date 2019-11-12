@@ -20,6 +20,6 @@ public class Exec{
 
     Process p = pbuilder.start();
 
-    //p.wait();
+    p.waitFor();
   }
 }

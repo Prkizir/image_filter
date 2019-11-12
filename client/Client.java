@@ -12,11 +12,13 @@ public class Client{
     System.out.println("Welcome:");
     System.out.println("usage: [image_source_path] [filter] [image_destination_path] <technology>");
 
-    String host = "localhost";
+    String host = "10.25.24.6";
     int port = 8991;
 
     try(Socket socket = new Socket(host,port)){
       OutputStream os = socket.getOutputStream();
+      InputStream is = socket.getInputStream();
+
       Scanner scanner = new Scanner(System.in);
       String str = null;
 
@@ -33,6 +35,8 @@ public class Client{
         }
 
         ObjectOutputStream oos = new ObjectOutputStream(os);
+        ObjectInputStream ois = new ObjectInputStream(is);
+
         String[] params = str.split(" +");
         int argc = params.length;
 
@@ -50,6 +54,14 @@ public class Client{
           try{
             oos.writeObject(new Request(source, filter, technology));
             oos.flush();
+
+            Response response = (Response)ois.readObject();
+
+            byte[] byteArray = response.getByteArray();
+            BufferedImage image = ImageIO.read(new ByteArrayInputStream(byteArray));
+
+            ImageIO.write(image,"png", new File(destination + "/" + response.getFileName()));
+
           }catch(Exception e){
             e.printStackTrace();
           }

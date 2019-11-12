@@ -6,17 +6,20 @@ import java.util.concurrent.ForkJoinPool;
 
 
 public class Filter extends RecursiveAction{
+  public static final long serialVersionUID = 10293918281249501L;
   private static final int BLUR_WINDOW = 15;
   private static final int GRAIN = 10_000;
   private int src[], dest[], width, height, start, end;
+  private String filter;
 
-  public Filter(int start, int end, int src[], int dest[], int width, int height){
+  public Filter(int start, int end, int src[], int dest[], int width, int height, String filter){
     this.start = start;
     this.end = end;
     this.src = src;
     this.dest = dest;
     this.width = width;
     this.height = height;
+    this.filter = filter;
   }
 
   public void blur(int row, int col){
@@ -74,10 +77,6 @@ public class Filter extends RecursiveAction{
     dest[(row * width) + col] = dpixel;
   }
 
-  public void hue(int row, int col){
-
-  }
-
   public void edge(int row, int col){
     int topPixel, lowPixel, dpixel;
     int tmp_row;
@@ -119,7 +118,19 @@ public class Filter extends RecursiveAction{
       row = index / width;
       col = index % width;
 
-      edge(row, col);
+      switch(filter){
+        case "blur":
+          blur(row, col);
+          break;
+        case "edge":
+          edge(row, col);
+          break;
+        case "gray":
+          gray(row, col);
+          break;
+        default:
+          break;
+      }
     }
   }
 
@@ -129,8 +140,8 @@ public class Filter extends RecursiveAction{
       computeDirectly();
     }else{
       int mid = start + ((end - start) / 2);
-      invokeAll(new Filter(start, mid, src, dest, width, height),
-                new Filter(mid, end, src, dest, width, height));
+      invokeAll(new Filter(start, mid, src, dest, width, height, filter),
+                new Filter(mid, end, src, dest, width, height, filter));
     }
   }
 
@@ -138,6 +149,9 @@ public class Filter extends RecursiveAction{
     ForkJoinPool pool;
 
     final String srcName = args[0];
+    final String filterT = args[1];
+    final String destName = args[2];
+
     File srcFile = new File(srcName);
 
     final BufferedImage source = ImageIO.read(srcFile);
@@ -148,12 +162,12 @@ public class Filter extends RecursiveAction{
     int dest[] = new int[src.length];
 
     pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
-    pool.invoke(new Filter(0, w * h, src, dest, w, h));
+    pool.invoke(new Filter(0, w * h, src, dest, w, h, filterT));
 
     final BufferedImage destination = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     destination.setRGB(0, 0, w, h, dest, 0, w);
 
-    File output = new File("output.png");
+    File output = new File("img/" + destName);
     ImageIO.write(destination, "png", output);
   }
 }
