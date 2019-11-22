@@ -1,3 +1,22 @@
+/*
+*  Request <Server> source code: object class to receive object through a socket. Includes
+*       filter parameters and image to process in the server side.
+*  Copyright (C) 2019  Sergio Isaac Mercado Silvano
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <https://www.gnu.org/licenses/>
+*/
+
 import java.net.*;
 import java.io.*;
 import java.util.*;
@@ -11,7 +30,8 @@ public class Request implements Serializable{
 
   public byte[] byteArray;
 
-  //Constructor with 3 params
+  //Constructor
+
   public Request(String source, String filter, String technology) throws Exception{
     this.source = source;
     this.filter = filter;
@@ -27,6 +47,8 @@ public class Request implements Serializable{
     this.byteArray = bstream.toByteArray();
   }
 
+  //Obtain filename from file
+
   public String getFileName(){
     File f = new File(source);
     String name =  f.getName();
@@ -34,13 +56,19 @@ public class Request implements Serializable{
     return name;
   }
 
+  //Obtain filter to apply
+
   public String getFilter(){
     return filter;
   }
 
+  //Obtain technology to apply the filter with
+
   public String getTechnology(){
     return technology;
   }
+
+  //Obtain image byte array
 
   public byte[] getByteArray(){
     return byteArray;

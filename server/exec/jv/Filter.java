@@ -1,9 +1,33 @@
+/*
+*  Filter source code: Applies a given filter from three implementations:
+*     -Blur
+*     -Grayscale
+*     -Edge detection
+*  Copyright (C) 2019  Sergio Isaac Mercado Silvano
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <https://www.gnu.org/licenses/>
+*/
+
+//Required libraries
+
 import java.awt.image.BufferedImage;
 import java.io.File;
 import javax.imageio.ImageIO;
 import java.util.concurrent.RecursiveAction;
 import java.util.concurrent.ForkJoinPool;
 
+//Must extend recursive action (does not return any value)
 
 public class Filter extends RecursiveAction{
   public static final long serialVersionUID = 10293918281249501L;
@@ -11,6 +35,8 @@ public class Filter extends RecursiveAction{
   private static final int GRAIN = 10_000;
   private int src[], dest[], width, height, start, end;
   private String filter;
+
+  //Constructor
 
   public Filter(int start, int end, int src[], int dest[], int width, int height, String filter){
     this.start = start;
@@ -21,6 +47,8 @@ public class Filter extends RecursiveAction{
     this.height = height;
     this.filter = filter;
   }
+
+  //Blur method
 
   public void blur(int row, int col){
     int border, i, j, cells;
@@ -56,6 +84,8 @@ public class Filter extends RecursiveAction{
     dest[(row * width) + col] = dpixel;
   }
 
+  //Grayscale method
+
   private void gray(int row, int col){
     int pixel, dpixel;
 
@@ -76,6 +106,8 @@ public class Filter extends RecursiveAction{
 
     dest[(row * width) + col] = dpixel;
   }
+
+  //Edge detection method
 
   public void edge(int row, int col){
     int topPixel, lowPixel, dpixel;
@@ -110,6 +142,9 @@ public class Filter extends RecursiveAction{
     dest[(row * width) + col] = dpixel;
   }
 
+
+  //Serial filtering
+
   protected void computeDirectly(){
     int index;
     int row, col;
@@ -117,6 +152,8 @@ public class Filter extends RecursiveAction{
     for(index = start; index < end; index++){
       row = index / width;
       col = index % width;
+
+      //Check which filter to apply on each iteration
 
       switch(filter){
         case "blur":
@@ -134,12 +171,21 @@ public class Filter extends RecursiveAction{
     }
   }
 
+  //RecursiveAction required method (compute())
+
   @Override
   protected void compute(){
+
+    //Check if problem can be solved serially
     if((end - start) <= GRAIN){
       computeDirectly();
     }else{
+
+      //Split the size in half on each iteration
+
       int mid = start + ((end - start) / 2);
+
+      //Let all threads work on upper and lower half on each iteration
       invokeAll(new Filter(start, mid, src, dest, width, height, filter),
                 new Filter(mid, end, src, dest, width, height, filter));
     }
@@ -147,6 +193,8 @@ public class Filter extends RecursiveAction{
 
   public static void main(String[] args) throws Exception{
     ForkJoinPool pool;
+
+    //Command parameters
 
     final String srcName = args[0];
     final String filterT = args[1];
@@ -156,17 +204,29 @@ public class Filter extends RecursiveAction{
 
     final BufferedImage source = ImageIO.read(srcFile);
 
+    //Obtain image parameters
+
     int w = source.getWidth();
     int h = source.getHeight();
+
+    //Transform image into array
     int src[] = source.getRGB(0, 0, w, h, null, 0, w);
+
+    //Prepare destination array of same size as source
     int dest[] = new int[src.length];
+
+    //Begin Thread Pool work
 
     pool = new ForkJoinPool(Runtime.getRuntime().availableProcessors());
     pool.invoke(new Filter(0, w * h, src, dest, w, h, filterT));
 
+    //End Thread Pool work
+
+    //Transform array into image
     final BufferedImage destination = new BufferedImage(w, h, BufferedImage.TYPE_INT_ARGB);
     destination.setRGB(0, 0, w, h, dest, 0, w);
 
+    //Write image file into "img" directory with new filename
     File output = new File("img/" + destName);
     ImageIO.write(destination, "png", output);
   }
