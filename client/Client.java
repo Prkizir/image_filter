@@ -67,7 +67,7 @@ public class Client{
 
       while(true){
 
-        System.out.printf("> \n");
+        System.out.printf("> ");
         str = scanner.nextLine();
 
         //Check if user input is "exit"; close connection if true
