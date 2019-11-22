@@ -2,10 +2,10 @@
 \contentsline {section}{\numberline {2}Multi-client Server}{3}{section.2}
 \contentsline {section}{\numberline {3}Image Filtering: Understanding}{5}{section.3}
 \contentsline {subsection}{\numberline {3.1}Blur}{6}{subsection.3.1}
-\contentsline {subsection}{\numberline {3.2}Grayscale}{6}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.2}Grayscale}{7}{subsection.3.2}
 \contentsline {subsection}{\numberline {3.3}Edge detection}{7}{subsection.3.3}
 \contentsline {section}{\numberline {4}Paradigm Exploration}{9}{section.4}
 \contentsline {section}{\numberline {5}Technology Implementation}{10}{section.5}
-\contentsline {section}{\numberline {6}Applications}{13}{section.6}
-\contentsline {section}{\numberline {7}Conclussions}{14}{section.7}
-\contentsline {section}{\numberline {8}Bibliography}{15}{section.8}
+\contentsline {section}{\numberline {6}Applications}{16}{section.6}
+\contentsline {section}{\numberline {7}Conclussions}{17}{section.7}
+\contentsline {section}{\numberline {8}Bibliography}{18}{section.8}

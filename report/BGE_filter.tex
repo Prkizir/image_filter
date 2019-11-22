@@ -107,17 +107,32 @@
 	
 	\subsection{Blur}
 	
+	The blur method applies a blur window, which corresponds to the neighbouring pixels of a single one. How this works is we get the added value of all the RGB values of each pixel in the blur window. Once the RGB values are set, we will divide them by the number of pixels in the blur window, and the result will be stored in a single pixel on the destination image file. This can be seen in the next figure:
 	
+	\begin{figure}[H]
+		\centering
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{Lenna.png}
+			\caption{Original Image}
+		\end{subfigure}%		
+		{\LARGE$\xrightarrow{blur}$}%
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{jv_blur_Lenna.png}
+			\caption{Filtered Image}
+		\end{subfigure}
+
+		\caption{Blur filter application to Lenna.png}
+	\end{figure}			
 	
 	\subsection{Grayscale}
 	
 	There are many methods for implementing a grayscale filter. The method used in this project is by simply averaging the RGB values from the source image and setting that average to each RGB values on the destination image.
 	
-	This can be seen by implementing the filter on the following image: 
+	This can be seen by implementing the filter on the following image:	
 	
-	\vfill	
-	
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\begin{subfigure}{.47\textwidth}
 			\centering
@@ -160,7 +175,7 @@
 	
 	Now, this implementation works for certain images, because of how it is implemented, the algorithm struggles to work on very-defined, sharp, vertical lines. For instance, let's look at the following application of the filter:\\
 	
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\begin{subfigure}{.47\textwidth}
 			\centering
@@ -189,7 +204,7 @@
 
 	In this section I'll go directly to how the application works. First, let's explore what the source directory from the client looks like at the start.
 		
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=\textwidth]{clientsrc.png}
 		\caption{Single client directory}
@@ -197,16 +212,11 @@
 	
 	Now that we have stored a number of images inside the source directory, let's jump to the destination directory, which as of now should be empty to demonstrate the working application.
 	
-	\vfill
-	
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=\textwidth]{emptydirclient.png}
 		\caption{Empty client destination directory. Resuls will be stored here}
 	\end{figure}	
-	
-	\vfill
-	
 	
 	Once that is set, one has to run the application. Starting from the server side, we have to run the application there before any client can connect to it. So we jump to the server side an run the application (recompile if necessary) with "java Server". The starting promt should look like this:\\
 	
@@ -220,13 +230,54 @@
 	
 	Going back to the main client directory, we have to recompile (if necessary) and run the Client application (java Client). Once it's running, a message will promt and ask the user to imput certain parameters defined in the message promt. 
 	
-	\begin{figure}[h]
+	\begin{figure}[H]
 		\centering
 		\includegraphics[width=\textwidth]{clientinit.png}
 		\caption{Client starting promt}
 	\end{figure}	
 	
-		
+	Once the client connects this should appear on the server side, indicating that a client has connected to the server itself and shows the client's ip address.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{clientconnected.png}
+		\caption{Client with ip address 10.25.73.103 connected}
+	\end{figure}	
+	
+	On the client side we may request multiple filters to multiple images, passing the necessary arguments to the command line as such:
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{requestsclient.png}
+		\caption{Multiple client requests to the server; results will be stored on the "dest" directory}
+	\end{figure}	
+	
+	After the request is processed, the resulting image will be stored to where the client requested \textbf{relative} to where the user started the Client process. Because the other technologies are not yet implemented, I used java on the test cases; the other technologies will be implemented on further revisions. 
+	
+	Now if we jump back to the client destination directory, we will see that new images have been added.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{destfilled.png}
+		\caption{Destination directory now with the requested images}
+	\end{figure}	
+	
+	For the naming convention, I used the technology implemented for the filtering itself, the filter applied to the image and the original name of the image.
+	
+	Finally, once the client is done, it may type the "exit" command. This will indicate that the client is finished and wishes to disconnect from the server. The client process will then close its socket connections to the child process "forked" by the main server thread and indicate it has disconnected. This is visible on both sides of the application, as seen in figure.
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{exitclient.png}
+		\caption{Client side}
+	\end{figure}	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{clientdisconnected.png}
+		\caption{Server side}
+	\end{figure}	
+	
 	
 	\section{Applications}
 
