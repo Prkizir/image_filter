@@ -115,9 +115,69 @@
 	
 	This can be seen by implementing the filter on the following image: 
 	
+	\vfill	
+	
+	\begin{figure}[h]
+		\centering
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{Lenna.png}
+			\caption{Original Image}
+		\end{subfigure}%		
+		{\LARGE$\xrightarrow{grayscale}$}%
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{jv_gray_Lenna.png}
+			\caption{Filtered Image}
+		\end{subfigure}
+
+		\caption{Grayscale filter application to Lenna.png}
+	\end{figure}		
+		
+	
 	\subsection{Edge detection}
 	
+	For the edge detection, the horizontal method was used. Although not completely efficient, it does a good job on detecting the edges of an image. Such edges are highlighted by the absolute value of the difference between the top and bottom pixels of a sliding window of a determined size. The obtained value from the difference is then compared against an empirically obtained threshold value between 0 and 1.\\ 
+
+	\begin{figure}[h]
+		\centering
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{city2.png}
+			\caption{Original Image}
+		\end{subfigure}%		
+		{\LARGE$\xrightarrow{edge}$}%
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{jv_edge_city2.png}
+			\caption{Filtered Image}
+		\end{subfigure}
+
+		\caption{Edge detection filter application to a top city view}
+	\end{figure}	
+
+	In this project, the threshold value was set between 0.65 and 0.70; anything outside the threshold would be considered "white" whereas inside the threshold it would be considered black and painted respectively. Note that on this implementation the RGB values of the top and low set of pixels where averaged respectively, thus returning a somewhat grayscaled image.\\
 	
+	Now, this implementation works for certain images, because of how it is implemented, the algorithm struggles to work on very-defined, sharp, vertical lines. For instance, let's look at the following application of the filter:\\
+	
+	\begin{figure}[h]
+		\centering
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{coloredsquares.png}
+			\caption{Original Image}
+		\end{subfigure}%		
+		{\LARGE$\xrightarrow{edge}$}%
+		\begin{subfigure}{.47\textwidth}
+			\centering
+			\includegraphics[width=5cm]{jv_edge_coloredsquares.png}
+			\caption{Filtered Image}
+		\end{subfigure}
+
+		\caption{Edge detection filter application to colored squares}
+	\end{figure}	
+	
+	Notice how it completely ignores any vertical lines that appear in the original image, and even tho, it fails to detect some horizontal lines as well. Even if it worked fairly well on Figure 5, we see a lack of efficiency and correctness on the algorithm. There are many other algorithms that can implement a better, more efficient, solution, but for this project the implemented algorithm will suffice. 
 	
 	\section{Paradigm Exploration}	
 	
@@ -127,9 +187,44 @@
 	
 	\section{Technology Implementation}
 
+	In this section I'll go directly to how the application works. First, let's explore what the source directory from the client looks like at the start.
+		
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{clientsrc.png}
+		\caption{Single client directory}
+	\end{figure}		
 	
-
-	\section{Results}
+	Now that we have stored a number of images inside the source directory, let's jump to the destination directory, which as of now should be empty to demonstrate the working application.
+	
+	\vfill
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{emptydirclient.png}
+		\caption{Empty client destination directory. Resuls will be stored here}
+	\end{figure}	
+	
+	\vfill
+	
+	
+	Once that is set, one has to run the application. Starting from the server side, we have to run the application there before any client can connect to it. So we jump to the server side an run the application (recompile if necessary) with "java Server". The starting promt should look like this:\\
+	
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=\textwidth]{serverinit.png}
+		\caption{Server starting promt}
+	\end{figure}	
+	
+	
+	Going back to the main client directory, we have to recompile (if necessary) and run the Client application (java Client). Once it's running, a message will promt and ask the user to imput certain parameters defined in the message promt. 
+	
+	\begin{figure}[h]
+		\centering
+		\includegraphics[width=\textwidth]{clientinit.png}
+		\caption{Client starting promt}
+	\end{figure}	
 	
 		
 	
