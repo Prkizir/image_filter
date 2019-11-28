@@ -2,13 +2,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string>
 #include <opencv/highgui.h>
 //#include "utils/cheader.h"
 
+#define BLUR_WINDOW 15
+
 typedef enum color {BLUE, GREEN, RED} Color;
 
-__device__ void blur(unsigned char *src, unsigned char *dest, int width, int heigth, int blur_window, int step, int channels){
+__gloal__ void blur(unsigned char *src, unsigned char *dest, int width, int heigth, int blur_window, int step, int channels){
   int i, j, side_pixels, cells;
   int ren, col, tmp_ren, tmp_col;
   float r, g, b;
@@ -34,7 +36,7 @@ __device__ void blur(unsigned char *src, unsigned char *dest, int width, int hei
   dest[(ren * step) + (col * channels) + BLUE] = (unsigned char) (b / cells);
 }
 
-__device__ void gray(unsigned char *src, unsigned char *dest, int width, int height, int step, int channels){
+__global__ void gray(unsigned char *src, unsigned char *dest, int width, int height, int step, int channels){
   int ren, col;
 	float r, g, b, avg;
 
@@ -53,31 +55,17 @@ __device__ void gray(unsigned char *src, unsigned char *dest, int width, int hei
 	dest[(ren * step) + (col * channels) + BLUE] = (unsigned char) (avg);
 }
 
-__device__ void edge(unsigned char *src, unsigned char *dest, int width, int height, int step, int channels){
+__global__ void edge(unsigned char *src, unsigned char *dest, int width, int height, int step, int channels){
   //TODO
 }
 
-__global__ void kernel(unsigned char *src, unsigned char *dest, int width, int heigth, int step, int channels, char * filter) {
-  if(filter.compare("blur") == 0){
-    blur(src, dest, width, height, step, channels);
-  }
-
-  if(filter.compare("gray") == 0){
-    gray(src, dest, width, height, step, channels);
-  }
-
-  if(option.compare("edge") == 0){
-    edge(src, dest, width, height, step, channels);
-  }
-}
-
 int main(int argc, char* argv[]) {
-	int i, step, size;
+	int step, size;
 	unsigned char *dev_src, *dev_dest;
 
-  string src_name = argv[1];
-  string filter_t = argv[2];
-  string dest_name = argv[3];
+  std::string src_name = argv[1];
+  std::string filter_t = argv[2];
+  std::string dest_name = argv[3];
 
 	IplImage *src = cvLoadImage(src_name, CV_LOAD_IMAGE_COLOR);
 	IplImage *dest = cvCreateImage(cvSize(src->width, src->height), IPL_DEPTH_8U, 3);
@@ -90,7 +78,13 @@ int main(int argc, char* argv[]) {
 
 	cudaMemcpy(dev_src, src->imageData, size, cudaMemcpyHostToDevice);
 
-	kernel<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels, filter_t);
+  if(filter_t.compare("blur") == 0){
+    blur<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
+  }
+
+  if(filter_t.compare("gray") == 0){
+    gray<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
+  }
 
 	cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
 
