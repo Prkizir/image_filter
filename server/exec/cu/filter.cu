@@ -90,7 +90,6 @@ int main(int argc, char* argv[]) {
 
 	cudaFree(dev_dest);
 	cudaFree(dev_src);
-  free(seq_dest);
 
 	return 0;
 }
