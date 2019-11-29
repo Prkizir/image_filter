@@ -82,11 +82,11 @@ int main(int argc, char* argv[]) {
 
 	cudaMemcpy(dev_src, src->imageData, size, cudaMemcpyHostToDevice);
 
-  if(compare(filter_t,"blur") == 0){
+  if(strcmp(filter_t,"blur") == 0){
     blur<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, BLUR_WINDOW, step, src->nChannels);
   }
 
-  if(compare(filter_t,"gray") == 0){
+  if(strcmp(filter_t,"gray") == 0){
     gray<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
   }
 
