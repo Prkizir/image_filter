@@ -57,6 +57,8 @@ int main(int argc, char* argv[]) {
 
 	cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
 
+	cvSaveImage("test.png" , dest);
+
 	cudaFree(dev_dest);
 	cudaFree(dev_src);
 
