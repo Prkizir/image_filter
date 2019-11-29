@@ -84,14 +84,12 @@ int main(int argc, char* argv[]) {
 
   if(strcmp(filter_t,"blur") == 0){
     blur<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, BLUR_WINDOW, step, src->nChannels);
-    cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
-    cvSaveImage(strcat(dir,dest_name) , dest);
-  }
-
-  if(strcmp(filter_t,"gray") == 0){
+		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
+  	cvSaveImage(strcat(dir,dest_name) , dest);
+  }else if(strcmp(filter_t,"gray") == 0){
     gray<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
-    cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
-    cvSaveImage(strcat(dir,dest_name) , dest);
+		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
+  	cvSaveImage(strcat(dir,dest_name) , dest);
   }
 
 	cudaFree(dev_dest);
