@@ -62,7 +62,7 @@ __global__ void edge(unsigned char *src, unsigned char *dest, int width, int hei
 
 	float rH, gH, bH, avgH;
 	float rL, gL, bL, avgL;
-	
+
 	rH = 0; gH = 0; bH = 0;
 	rL = 0; gL = 0; bL = 0;
 
@@ -118,14 +118,19 @@ int main(int argc, char* argv[]) {
     blur<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, BLUR_WINDOW, step, src->nChannels);
 		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
   	cvSaveImage(strcat(dir,dest_name) , dest);
+
   }else if(strcmp(filter_t,"gray") == 0){
     gray<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
 		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
   	cvSaveImage(strcat(dir,dest_name) , dest);
+
   }else if(strcmp(filter_t,"edge") == 0){
 		edge<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
 		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
   	cvSaveImage(strcat(dir,dest_name) , dest);
+		
+	}else{
+		printf("No option available");
 	}
 
 	cudaFree(dev_dest);
