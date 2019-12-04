@@ -50,15 +50,15 @@ void gray(IplImage *src, IplImage *dest, int ren, int col){
 
   r = 0; g = 0; b = 0;
 
-  r = (float) src[(ren * step) + (col * channels) + RED];
-  g = (float) src[(ren * step) + (col * channels) + GREEN];
-  b = (float) src[(ren * step) + (col * channels) + BLUE];
+  r = (float) src->imageData[(ren * step) + (col * src->nChannels) + RED];
+  g = (float) src->imageData[(ren * step) + (col * src->nChannels) + GREEN];
+  b = (float) src->imageData[(ren * step) + (col * src->nChannels) + BLUE];
 
   avg = (r + g + b)/3.0;
 
-  dest[(ren * step) + (col * channels) + RED] =  (unsigned char) (avg);
-  dest[(ren * step) + (col * channels) + GREEN] = (unsigned char) (avg);
-  dest[(ren * step) + (col * channels) + BLUE] = (unsigned char) (avg);
+  dest -> imageData[(ren * step) + (col * dest->nChannels) + RED] =  (unsigned char) (avg);
+  dest -> imageData[(ren * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (avg);
+  dest -> imageData[(ren * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (avg);
 }
 
 void edge(IplImage *src, IplImage *dest, int ren, int col){
@@ -74,25 +74,25 @@ void edge(IplImage *src, IplImage *dest, int ren, int col){
 
   tmp_row = MIN(MAX(row + 1, 0), height - 1);
 
-  rH = (float) src[(row * step) + (col * channels) + RED];
-  gH = (float) src[(row * step) + (col * channels) + GREEN];
-  bH = (float) src[(row * step) + (col * channels) + BLUE];
+  rH = (float) src->imageData[(row * step) + (col * src->nChannels) + RED];
+  gH = (float) src->imageData[(row * step) + (col * src->nChannels) + GREEN];
+  bH = (float) src->imageData[(row * step) + (col * src->nChannels) + BLUE];
 
-  rL = (float) src[(tmp_row * step) + (col * channels) + RED];
-  gL = (float) src[(tmp_row * step) + (col * channels) + GREEN];
-  bL = (float) src[(tmp_row * step) + (col * channels) + BLUE];
+  rL = (float) src->imageData[(tmp_row * step) + (col * src->nChannels) + RED];
+  gL = (float) src->imageData[(tmp_row * step) + (col * src->nChannels) + GREEN];
+  bL = (float) src->imageData[(tmp_row * step) + (col * src->nChannels) + BLUE];
 
   avgH = (rH + gH + bH)/3.0;
   avgL = (rL + gL + bL)/3.0;
 
   if((0.65 >= fabs(avgH - avgL)) && (0.70 >= fabs(avgH - avgL))){
-    dest[(row * step) + (col * channels) + RED] = (unsigned char) (0xFF);
-    dest[(row * step) + (col * channels) + GREEN] = (unsigned char) (0xFF);
-    dest[(row * step) + (col * channels) + BLUE] = (unsigned char) (0xFF);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + RED] = (unsigned char) (0xFF);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (0xFF);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (0xFF);
   }else{
-    dest[(row * step) + (col * channels) + RED] = (unsigned char) (0);
-    dest[(row * step) + (col * channels) + GREEN] = (unsigned char) (0);
-    dest[(row * step) + (col * channels) + BLUE] = (unsigned char) (0);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + RED] = (unsigned char) (0);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (0);
+    dest -> imageData[(row * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (0);
   }
 }
 
