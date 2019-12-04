@@ -132,17 +132,17 @@ void apply(IplImage *src, IplImage *dest, char * flt){
 
 int main(int argc, char *argv[]) {
   int i;
-  char dest_path[256];
+  char dest_path[256] = "img/";
 
   IplImage *src = cvLoadImage(argv[1], CV_LOAD_IMAGE_COLOR);
   IplImage *dest = cvCreateImage(cvSize(src->width, src->height), IPL_DEPTH_8U, 3);
 
   apply(src, dest, argv[2]);
 
-  strcat(dest_path,"img/");
+
   strcat(dest_path,argv[3]);
 
-  cvSaveImage(dest_path, dest,0);
+  cvSaveImage(dest_path, dest, 0);
 
   return 0;
 }
