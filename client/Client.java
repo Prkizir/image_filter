@@ -89,11 +89,7 @@ public class Client{
         String[] params = str.split(" +");
         int argc = params.length;
 
-
-
-        if(argc != 4){
-          System.out.printf("usage: [image_source_path] [filter] [image_destination_path] <technology>\n");
-        }else{
+        if(argc == 4){
 
           System.out.printf("Sending request...\n");
 
@@ -125,6 +121,8 @@ public class Client{
           }catch(Exception e){
             e.printStackTrace();
           }
+        }else{
+          System.out.printf("usage: [image_source_path] [filter] [image_destination_path] <technology>\n");
         }
       }
 

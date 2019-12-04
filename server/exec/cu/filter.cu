@@ -55,7 +55,36 @@ __global__ void gray(unsigned char *src, unsigned char *dest, int width, int hei
 }
 
 __global__ void edge(unsigned char *src, unsigned char *dest, int width, int height, int step, int channels){
+	int tmp_row;
+	int row = blockIdx.x;
+	int col = threadIdx.x;
 
+	float rH, gH, bH, avgH;
+	float rL, gL, bL, avgL;
+
+	tmp_row = MIN(MAX(row + 1, 0), height - 1);
+
+	rH = (float) src[(row * step) + (col * channels) + RED];
+	gH = (float) src[(row * step) + (col * channels) + GREEN];
+	bH = (float) src[(row * step) + (col * channels) + BLUE];
+
+	rL = (float) src[(tmp_row * step) + (col * channels) + RED];
+	gL = (float) src[(tmp_row * step) + (col * channels) + GREEN];
+	bL = (float) src[(tmp_row * step) + (col * channels) + BLUE];
+
+	avgH = (rH + gH + bH)/3.0;
+	avgL = (rL + gL + bL)/3.0;
+
+	if(0.65 >= fabs(avgH - avgL) &&
+		 0.70 >= fabs(avgH - avgL)){
+			 dest[(row * step) + (col * channels) + RED] = (unsigned char) (1);
+			 dest[(row * step) + (col * channels) + GREEN] = (unsigned char) (1);
+			 dest[(row * step) + (col * channels) + BLUE] = (unsigned char) (1);
+		 }else{
+			 dest[(row * step) + (col * channels) + RED] = (unsigned char) (0);
+			 dest[(row * step) + (col * channels) + GREEN] = (unsigned char) (0);
+			 dest[(row * step) + (col * channels) + BLUE] = (unsigned char) (0);
+		 }
 }
 
 int main(int argc, char* argv[]) {
