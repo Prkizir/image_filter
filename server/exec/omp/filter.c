@@ -50,15 +50,15 @@ void gray(IplImage *src, IplImage *dest, int row, int col){
 
   r = 0; g = 0; b = 0;
 
-  r = (float) src->imageData[(ren * step) + (col * src->nChannels) + RED];
-  g = (float) src->imageData[(ren * step) + (col * src->nChannels) + GREEN];
-  b = (float) src->imageData[(ren * step) + (col * src->nChannels) + BLUE];
+  r = (float) src->imageData[(row * step) + (col * src->nChannels) + RED];
+  g = (float) src->imageData[(row * step) + (col * src->nChannels) + GREEN];
+  b = (float) src->imageData[(row * step) + (col * src->nChannels) + BLUE];
 
   avg = (r + g + b)/3.0;
 
-  dest -> imageData[(ren * step) + (col * dest->nChannels) + RED] =  (unsigned char) (avg);
-  dest -> imageData[(ren * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (avg);
-  dest -> imageData[(ren * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (avg);
+  dest -> imageData[(row * step) + (col * dest->nChannels) + RED] =  (unsigned char) (avg);
+  dest -> imageData[(row * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (avg);
+  dest -> imageData[(row * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (avg);
 }
 
 void edge(IplImage *src, IplImage *dest, int row, int col){
@@ -72,7 +72,7 @@ void edge(IplImage *src, IplImage *dest, int row, int col){
   rH = 0; gH = 0; bH = 0;
   rL = 0; gL = 0; bL = 0;
 
-  tmp_row = MIN(MAX(row + 1, 0), height - 1);
+  tmp_row = MIN(MAX(row + 1, 0), src->height - 1);
 
   rH = (float) src->imageData[(row * step) + (col * src->nChannels) + RED];
   gH = (float) src->imageData[(row * step) + (col * src->nChannels) + GREEN];
