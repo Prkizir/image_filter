@@ -42,7 +42,7 @@ void blur(IplImage *src, IplImage *dest, int ren, int col){
   dest -> imageData[(ren * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (b / cells);
 }
 
-void gray(IplImage *src, IplImage *dest, int ren, int col){
+void gray(IplImage *src, IplImage *dest, int row, int col){
   float r, g, b, avg;
   int step;
 
@@ -61,7 +61,7 @@ void gray(IplImage *src, IplImage *dest, int ren, int col){
   dest -> imageData[(ren * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (avg);
 }
 
-void edge(IplImage *src, IplImage *dest, int ren, int col){
+void edge(IplImage *src, IplImage *dest, int row, int col){
   int tmp_row, step;
 
   step = src->widthStep/sizeof(uchar);
@@ -142,7 +142,7 @@ int main(int argc, char *argv[]) {
   strcat(dest_path,"img/");
   strcat(dest_path,argv[3]);
 
-  cvSaveImage(dest_path, dest);
+  cvSaveImage(dest_path, dest,0);
 
   return 0;
 }
