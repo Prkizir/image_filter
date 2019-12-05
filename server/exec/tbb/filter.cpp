@@ -16,8 +16,9 @@ enum color {BLUE, GREEN, RED};
 class Filter{
 private:
   IplImage * src, * dest;
+	char * tech;
 
-  void blur(int ren, int col){
+  void blur(int ren, int col) const{
     int side_pixels, i, j, cells;
     int tmp_ren, tmp_col, step;
     float r, g, b;
@@ -42,10 +43,9 @@ private:
       dest->imageData[(ren * step) + (col * dest->nChannels) + RED] =  (unsigned char) (r / cells);
       dest->imageData[(ren * step) + (col * dest->nChannels) + GREEN] = (unsigned char) (g / cells);
       dest->imageData[(ren * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (b / cells);
-    }
   }
 
-  void gray(int row, int col){
+	void gray(int row, int col) const{
     float r, g, b, avg;
     int step;
 
@@ -64,7 +64,7 @@ private:
     dest -> imageData[(row * step) + (col * dest->nChannels) + BLUE] = (unsigned char) (avg);
   }
 
-  void edge(int row, int col){
+	void edge(int row, int col) const{
     int tmp_row, step;
 
     step = src->widthStep/sizeof(uchar);
@@ -100,27 +100,49 @@ private:
   }
 
 public:
-  Filter(IplImage *source, IplImage *destination, char * technology): src(source), dest(destination){}
+  Filter(IplImage *source, IplImage *destination, char * technology): src(source), dest(destination), tech(technology){}
 
   void operator() (const blocked_range<int> &r) const {
-    for (int i = r.begin(); i != r.end(); i++){
-      int row = i / width;
-      int col = i % width;
-      blur(row,col);
-    }
+		if(strcmp(tech,"blur") == 0){
+			for (int i = r.begin(); i != r.end(); i++){
+      	int row = i / src->width;
+      	int col = i % src->width;		
+	    	blur(row, col);
+    	}
+		}
+
+		if(strcmp(tech,"gray") == 0){
+			for (int i = r.begin(); i != r.end(); i++){
+      	int row = i / src->width;
+      	int col = i % src->width;		
+	    	gray(row, col);
+    	}
+		}
+
+		if(strcmp(tech,"edge") == 0){
+			for (int i = r.begin(); i != r.end(); i++){
+      	int row = i / src->width;
+      	int col = i % src->width;		
+	    	edge(row, col);
+    	}		
+		}    
   }
 
 };
 
 int main(int argc, char *argv[]) {
+		char dest_path[256] = "img/";
+
     IplImage * src = cvLoadImage(argv[1], CV_LOAD_IMAGE_COLOR);
     IplImage * dest = cvCreateImage(cvSize(src->width, src->height),IPL_DEPTH_8U, 3);
 
     int size = src->width * src->height;
 
-    parallel_for(blocked_range<int>(0,size,GRAIN), Filter(src, dest));
+    parallel_for(blocked_range<int>(0,size,GRAIN), Filter(src, dest,argv[2]));
 
-    cvSaveImage("test.png", dest);
+		strcat(dest_path,argv[3]);
+
+    cvSaveImage(dest_path, dest);
 
   return 0;
 }
