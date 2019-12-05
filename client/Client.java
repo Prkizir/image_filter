@@ -45,8 +45,8 @@ public class Client{
 
     System.out.printf("\nusage: [image_source_path] [filter] [image_destination_path] [technology]\n");
     System.out.printf("                            <blur>                             <java>\n");
-    System.out.printf("                            <gray>                             <openmp> <-- NOT YET IMPLEMENTED\n");
-    System.out.printf("                            <edge>                             <cuda> <-- NOT YET IMPLEMENTED\n");
+    System.out.printf("                            <gray>                             <openmp>\n");
+    System.out.printf("                            <edge>                             <cuda>\n");
     System.out.printf("                                                               <tbb> <-- NOT YET IMPLEMENTED\n\n");
 
     System.out.printf("Type: \"exit\" to quit the program.\n\n");
