@@ -1,3 +1,24 @@
+/*
+*  Filter source code: Applies a given filter from three implementations:
+*     -Blur
+*     -Grayscale
+*     -Edge detection
+*  Copyright (C) 2019  Sergio Isaac Mercado Silvano
+*
+*  This program is free software: you can redistribute it and/or modify
+*  it under the terms of the GNU General Public License as published by
+*  the Free Software Foundation, either version 3 of the License, or
+*  (at your option) any later version.
+*
+*  This program is distributed in the hope that it will be useful,
+*  but WITHOUT ANY WARRANTY; without even the implied warranty of
+*  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*  GNU General Public License for more details.
+*
+*  You should have received a copy of the GNU General Public License
+*  along with this program.  If not, see <https://www.gnu.org/licenses/>
+*/
+
 /*nvcc filter.cu `pkg-config --cflags --libs opencv`*/
 
 #include <stdlib.h>
@@ -128,7 +149,7 @@ int main(int argc, char* argv[]) {
 		edge<<<src->height, src->width>>>(dev_src, dev_dest, src->width, src->height, step, src->nChannels);
 		cudaMemcpy(dest->imageData, dev_dest, size, cudaMemcpyDeviceToHost);
   	cvSaveImage(strcat(dir,dest_name) , dest);
-		
+
 	}else{
 		printf("No option available");
 	}

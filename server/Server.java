@@ -74,7 +74,7 @@ public class Server{
     @Override
     public void run(){
       String pathname = "img/";
-      
+
       String cmd = null;
       String dir = null;
       String fn = null;
@@ -177,7 +177,7 @@ public class Server{
               fn = "tbb_" + request.getFilter() + "_" + request.getFileName();
 
               //Build command: ./Filter [source] [filter] [new_filename]
-              cmd = "./Filter ../../img" + request.getFileName() + " "
+              cmd = "./Filter ../../img/" + request.getFileName() + " "
                                          + request.getFilter() + " "
                                          + fn;
 
