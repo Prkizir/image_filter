@@ -21,5 +21,7 @@ listing:
 		-openmp
 		-cuda
 
+Final update (belated): All is working now
+
 This is a project for the multiprocessors and programming languages courses. Here, I will be using different programming languages as well as a variety of technologies to perform basic image filtering on a multi-client server basis.
 
